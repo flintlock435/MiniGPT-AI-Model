@@ -338,12 +338,9 @@ Planned areas of development include:
 
 ## License
 
-This project is licensed under the MIT License. See the `LICENSE` file for the complete license text.
-## Contributing
+This project is licensed under the Apache License 2.0. See the `LICENSE` file for the complete license text.
 
-Contributions and experiments are welcome.
-
-Useful areas include model architecture, tokenizer improvements, dataset preparation, training performance, inference, evaluation, and update-system development.
+Copyright 2026 R0sinc.
 
 ## About
 
