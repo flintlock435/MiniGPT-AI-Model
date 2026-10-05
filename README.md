@@ -43,7 +43,7 @@ MiniGPT uses a Byte-Level BPE tokenizer trained with the Hugging Face `tokenizer
 The current tokenizer has an 8,000-token vocabulary and is stored in:
 
 ```text
-data/v12_tokenizer.json
+data/vNUM_tokenizer.json
 ```
 
 The tokenizer is designed to handle previously unseen words more effectively than the original word-level tokenizer.
@@ -61,13 +61,13 @@ The project includes multiple training scripts for different experiments.
 The current custom-dataset training script is:
 
 ```text
-src/train_v14_custom.py
+src/train_vNUM_custom.py
 ```
 
 It trains the transformer directly on the project's custom conversational dataset and saves the resulting checkpoint to:
 
 ```text
-checkpoints/v14_custom_best_model.pt
+checkpoints/vNUM_custom_best_model.pt
 ```
 
 The project also contains earlier training pipelines used to experiment with larger external datasets and different training approaches.
@@ -249,7 +249,7 @@ python -m src.train_bpe_tokenizer
 The resulting tokenizer is saved to:
 
 ```text
-data/v12_tokenizer.json
+data/vNUM_tokenizer.json
 ```
 
 ### Train the V14 Custom Model
@@ -257,13 +257,13 @@ data/v12_tokenizer.json
 The current custom-data experiment can be trained with:
 
 ```powershell
-python -m src.train_v14_custom
+python -m src.train_vNUM_custom
 ```
 
 The checkpoint is saved to:
 
 ```text
-checkpoints/v14_custom_best_model.pt
+checkpoints/vNUM_custom_best_model.pt
 ```
 
 ### Dataset Preparation
@@ -290,7 +290,7 @@ It does not mean that the model has the general knowledge or response quality of
 
 MiniGPT is intentionally small and is still experimental.
 
-The current model can:
+As of now, the current model can only:
 
 * Produce incorrect information
 * Struggle with questions outside its training data
@@ -338,10 +338,7 @@ Planned areas of development include:
 
 ## License
 
-Add a `LICENSE` file to this repository before publishing the project publicly.
-
-The license should match the terms you intend to use for the source code, model files, and any included datasets.
-
+This project is licensed under the MIT License. See the `LICENSE` file for the complete license text.
 ## Contributing
 
 Contributions and experiments are welcome.
