@@ -1,0 +1,153 @@
+User: What is loss?
+Assistant: Loss measures how different a model's predictions are from the expected targets.
+
+User: What is an epoch?
+Assistant: An epoch is one complete pass through the training dataset.
+
+User: What is a language model?
+Assistant: A language model learns patterns in text and predicts likely next tokens.
+
+User: What is attention?
+Assistant: Attention allows a model to focus on relevant parts of a sequence when producing an output.
+
+User: What is machine learning?
+Assistant: Machine learning is a method where computers learn patterns from examples and use those patterns to make predictions.
+
+User: What is temperature?
+Assistant: Temperature controls how concentrated or varied token probabilities are during sampling.
+
+User: What is an optimizer?
+Assistant: An optimizer updates neural network parameters using gradients.
+
+User: Why do neural networks use parameters?
+Assistant: Parameters allow a neural network to store patterns learned during training.
+
+User: What is overfitting?
+Assistant: Overfitting occurs when a model performs well on training data but poorly on unseen data.
+
+User: What is a vocabulary?
+Assistant: A vocabulary is the collection of tokens that a tokenizer can represent.
+
+User: What is generalization?
+Assistant: Generalization is the ability of a model to perform well on unseen examples.
+
+User: How does text generation work?
+Assistant: Text generation repeatedly predicts the next token and adds it to the sequence.
+
+User: Why do transformers use attention?
+Assistant: Attention helps transformers model relationships between tokens in a sequence.
+
+User: What is artificial intelligence?
+Assistant: Artificial intelligence is the field of creating computer systems that can perform tasks that normally require intelligent behavior.
+
+User: Why is PyTorch useful?
+Assistant: PyTorch provides tools for building and training neural networks.
+
+User: What is PyTorch?
+Assistant: PyTorch is a machine learning framework that provides tensors, automatic differentiation, neural network modules, and GPU support.
+
+User: What is a transformer?
+Assistant: A transformer is a neural network architecture that uses attention to process relationships between tokens.
+
+User: What is a batch?
+Assistant: A batch is a group of training examples processed together during an optimization step.
+
+User: Why do AI models use GPUs?
+Assistant: AI models perform many mathematical operations that GPUs can execute in parallel.
+
+User: Hello
+Assistant: Hello! How can I help you?
+
+User: What is a checkpoint?
+Assistant: A checkpoint is a saved version of a model that can be restored later.
+
+User: Why are embeddings useful?
+Assistant: Embeddings convert tokens into numerical vectors that neural networks can process.
+
+User: What is validation loss?
+Assistant: Validation loss measures prediction error on validation data.
+
+User: Why can generated text be incorrect?
+Assistant: A language model can generate incorrect text because it predicts from learned statistical patterns.
+
+User: What is a dataset?
+Assistant: A dataset is a collection of examples used to train or evaluate a machine learning system.
+
+User: How can you recognize overfitting?
+Assistant: Overfitting often appears when training loss decreases while validation loss increases.
+
+User: What is backpropagation?
+Assistant: Backpropagation calculates gradients that describe how parameters affect loss.
+
+User: How does a language model work?
+Assistant: A language model uses previous tokens to predict the next token.
+
+User: What is training?
+Assistant: Training is the process of adjusting model parameters so predictions become more accurate.
+
+User: What is inference?
+Assistant: Inference is using a trained model to produce predictions without changing its parameters.
+
+User: What is context?
+Assistant: Context is the preceding sequence of tokens used when predicting the next token.
+
+User: What is a GPU?
+Assistant: A GPU is a processor designed to perform many calculations in parallel.
+
+User: What is validation?
+Assistant: Validation measures model performance on data that was not used to update its parameters.
+
+User: What is sampling?
+Assistant: Sampling chooses the next token from a probability distribution produced by a language model.
+
+User: What is a token?
+Assistant: A token is a numerical representation of a piece of text that a language model can process.
+
+User: How can a model improve?
+Assistant: A model can improve through better data, suitable architecture, optimization, and evaluation.
+
+User: Can a small model learn language?
+Assistant: A small model can learn simple statistical patterns, but its abilities are limited by its data and architecture.
+
+User: What is AI?
+Assistant: AI is the field of creating computer systems that can perform tasks involving learning, reasoning, and problem solving.
+
+User: What is gradient descent?
+Assistant: Gradient descent changes parameters in directions that reduce loss.
+
+User: What is CUDA?
+Assistant: CUDA is NVIDIA technology that allows compatible GPUs to perform general purpose computations.
+
+User: What is deep learning?
+Assistant: Deep learning uses neural networks with multiple layers to learn complex patterns from data.
+
+User: Why are GPUs useful for AI?
+Assistant: GPUs can perform many numerical operations in parallel, which helps neural network computation.
+
+User: What is a neural network?
+Assistant: A neural network is a system of connected mathematical operations whose parameters are adjusted during training.
+
+User: What is a parameter?
+Assistant: A parameter is a numerical value that controls how a neural network processes information.
+
+User: What is tokenization?
+Assistant: Tokenization converts text into smaller units called tokens.
+
+User: What is a tokenizer?
+Assistant: A tokenizer converts text into tokens that can be represented by numerical identifiers.
+
+User: What is an embedding?
+Assistant: An embedding represents a token as a vector of numerical values.
+
+User: Why does context matter?
+Assistant: Context provides information that helps a language model choose an appropriate continuation.
+
+User: Hi
+Assistant: Hi! What would you like to learn?
+
+User: Why do neural networks need training?
+Assistant: Training adjusts neural network parameters so the model can make better predictions.
+
+User: What is a PyTorch tensor?
+Assistant: A PyTorch tensor is a multidimensional numerical data structure used for machine learning.
+

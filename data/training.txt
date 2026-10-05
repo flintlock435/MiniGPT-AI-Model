@@ -1,0 +1,123 @@
+The world is full of interesting ideas. People learn by observing the world around them and by connecting new information to things they already understand. A machine can also learn patterns when it is given enough examples.
+
+A neural network is a mathematical system made from many connected parameters. During training, the network makes predictions and compares those predictions with the correct answers. The difference between the prediction and the answer is called the loss. The goal of training is to reduce the loss by adjusting the parameters.
+
+Language is a sequence of symbols. A language model learns relationships between those symbols. Given some text, the model attempts to predict what comes next. If the model sees the words "the sky is", it may learn that words such as "blue" often appear afterward. The model does not need to memorize a rule saying that the sky is blue. Instead, it can discover patterns from many examples.
+
+Training begins with random parameters. At first, the model has little useful knowledge. Its predictions are often poor, and its loss is relatively high. The optimizer uses gradients to determine how the parameters should change. After many updates, the model can become better at predicting the training data.
+
+A transformer is a type of neural network architecture that is particularly useful for processing sequences. One of its most important components is self attention. Self attention allows each position in a sequence to consider information from other positions.
+
+Imagine the sentence "The scientist placed the book on the table because it was heavy." Understanding the word "it" requires information from other parts of the sentence. Attention gives a neural network a mechanism for connecting related pieces of information.
+
+A transformer contains several layers. A typical layer includes an attention mechanism, a feed forward network, normalization, and residual connections. Multiple layers can be stacked together so that the network can build increasingly complex representations.
+
+The model also needs to know the position of each token. Without positional information, the model could have difficulty distinguishing between different orders of the same symbols. Position embeddings provide information about where each token occurs in the sequence.
+
+A language model usually receives a sequence of tokens and produces a probability distribution for the next token. The probabilities represent how likely different tokens are according to the model. The token with the highest probability is not always selected during generation. Sampling can be used to create more varied outputs.
+
+Temperature is one method for controlling sampling. A lower temperature makes the distribution more concentrated and usually produces more predictable text. A higher temperature makes the distribution more spread out and can produce more unusual text. Temperature does not add knowledge to the model. It only changes how predictions are selected.
+
+Another useful technique is top k sampling. Instead of considering every possible token, the system can keep only the k most likely choices. The next token is then sampled from that smaller group.
+
+Training data has a major effect on what a model learns. If the training data is small, the model has fewer patterns to learn. If the data contains many examples of a particular writing style, the model may reproduce that style. If the data contains errors, the model may learn those errors as well.
+
+More parameters do not automatically make a model better. A large model trained on poor data may perform worse than a smaller model trained on useful data. The amount and quality of training data, the architecture, the optimization process, and the evaluation method all matter.
+
+A good machine learning project measures more than training loss. A model can become very good at reproducing its training data without becoming good at handling new examples. This problem is called overfitting.
+
+To detect overfitting, a dataset can be divided into separate parts. The training set is used to update the model. A validation set is kept separate and is used to measure how well the model performs on data it did not directly train on.
+
+Suppose a dataset contains ten thousand examples. Most of the examples can be used for training, while a smaller portion can be reserved for validation. The exact split depends on the project and the amount of available data.
+
+A useful experiment should be reproducible. The code should specify the model architecture, training settings, dataset, optimizer, and random seed when appropriate. Checkpoints can be saved during training so that a model can be restored later.
+
+A checkpoint contains information about the learned parameters. It may also contain the optimizer state, training step, configuration, vocabulary, and other information needed to continue training.
+
+The tokenizer is another important component. A tokenizer converts text into numerical tokens. The simplest tokenizer can assign one number to every character. More advanced tokenizers can divide text into pieces such as words, word fragments, or frequently occurring character sequences.
+
+Character tokenization is easy to understand but can require many steps for long text. A subword tokenizer can represent common words efficiently while still being able to represent unfamiliar words by breaking them into smaller pieces.
+
+Every token has an integer identifier. The model uses an embedding table to convert those identifiers into vectors. These vectors are learned during training.
+
+A vector is a collection of numbers. In a neural network, vectors can represent useful properties that are difficult to describe using simple rules. During training, the model adjusts these vectors based on the patterns found in the data.
+
+Consider a small vocabulary containing the tokens cat, dog, animal, runs, and sleeps. The embedding for cat may gradually become related to the embeddings for dog and animal because those words occur in similar contexts. The network discovers these relationships from data.
+
+The training process can be described as a loop. First, a batch of examples is selected. The model produces predictions. A loss function compares the predictions with the targets. Gradients are calculated using backpropagation. The optimizer changes the parameters. Then another batch is processed.
+
+A batch contains several training examples processed together. Batch size affects memory usage and training behavior. Larger batches can process more examples at once, while smaller batches require less memory.
+
+The learning rate controls how strongly the optimizer changes the parameters during each update. A learning rate that is too large can make training unstable. A learning rate that is too small can make training extremely slow.
+
+Adam and AdamW are popular optimizers for neural networks. They use information from gradients to determine parameter updates. AdamW also uses weight decay as part of its optimization strategy.
+
+The loss function gives the training process a numerical objective. For next token prediction, cross entropy is commonly used. Lower cross entropy generally means that the model assigns higher probability to the correct tokens.
+
+A model that has never seen the training data starts with random or nearly random parameters. Its first predictions contain little useful information. As training progresses, repeated patterns become easier for the model to predict.
+
+Suppose the training text contains the sequence "machine learning". The model may first learn simple relationships between nearby characters. With enough data and sufficient capacity, it can learn longer relationships between tokens.
+
+Context length determines how much previous information the model can consider at one time. A short context is easier to process but provides less information. A longer context allows the model to consider more of the preceding sequence.
+
+Computational cost increases as the sequence becomes longer. Attention compares positions within a sequence, so efficient implementations are important for larger models.
+
+A computer can perform millions or billions of numerical operations very quickly. Neural networks take advantage of this ability by representing learning as large collections of mathematical operations.
+
+A central idea in machine learning is that useful behavior can emerge from optimization. Instead of manually programming every rule, we define a model, provide examples, define an objective, and allow optimization to change the parameters.
+
+This does not mean that the model understands the world in exactly the same way a person does. A language model is trained to predict patterns in its training data. Its behavior depends heavily on the data, architecture, training procedure, and context it receives.
+
+Building an artificial intelligence system is therefore an engineering process. The programmer chooses the data, designs the architecture, writes the training loop, monitors experiments, evaluates results, and changes the system based on evidence.
+
+Experiments should change one important factor at a time whenever possible. If the dataset, model size, learning rate, batch size, and training duration all change simultaneously, it becomes difficult to determine which change caused an improvement.
+
+A useful experiment begins with a clear question. For example, a developer might ask whether increasing the context length improves validation loss. The developer can train two comparable models and measure their performance.
+
+Measurements make machine learning less dependent on guesswork. Loss curves, validation results, generated samples, parameter counts, memory usage, and training time can all provide useful information.
+
+Generated text is another important way to inspect a language model. Numbers alone cannot reveal every problem. A model may have a reasonable loss while producing repetitive, incoherent, or unhelpful text.
+
+Repetition is common in small language models. If the model has limited training data, it may memorize phrases rather than learning general patterns. Increasing the diversity of the training data can help.
+
+Data diversity is important because language contains many different structures. Questions, statements, explanations, descriptions, stories, and conversations contain different patterns. A varied dataset gives a model more opportunities to learn.
+
+The quality of the data also matters. Duplicate text can cause certain patterns to appear more often than intended. Extremely noisy text can make learning harder. Carefully prepared data can make experiments more informative.
+
+When a model generates text, the first token becomes part of the context for the next prediction. The newly generated token is added to the sequence. The model then predicts another token. This process continues one token at a time.
+
+This is called autoregressive generation. The model uses its previous output as part of the input for the next prediction.
+
+A prompt provides an initial context. For example, the prompt "The future of artificial intelligence" gives the model a starting sequence. The model then predicts possible continuations based on what it learned during training.
+
+A model does not automatically become intelligent simply because it can generate text. Its abilities should be evaluated using appropriate tests. Different models can have different strengths and weaknesses.
+
+Evaluation is an essential part of development. A model should be tested on examples that represent the tasks it is expected to perform. The results should be recorded so that different versions can be compared.
+
+Software engineering and machine learning engineering work together. Clean code makes experiments easier to reproduce. Clear configuration makes it easier to change model settings. Checkpoints make long training runs safer.
+
+A project directory might contain source code, training data, checkpoints, configuration files, and experiment results. Keeping these components organized becomes increasingly important as the project grows.
+
+The first model in an experiment does not need to be perfect. A small working system is often more useful than a complicated system that cannot be tested. Once the basic pipeline works, individual components can be improved.
+
+This project began with a tiny dataset and a small transformer. The purpose was to understand every stage of the process. The next stages can increase the dataset size, improve the tokenizer, add validation, and experiment with larger models.
+
+Learning artificial intelligence requires both theory and practice. Mathematics explains why the algorithms work. Programming turns those algorithms into systems. Experiments reveal how the systems behave in practice.
+
+The most important habit is to test assumptions. When something works, measure it. When something fails, inspect the error. When a change appears to improve the model, repeat the experiment.
+
+A model is not defined only by its number of parameters. The complete system includes the data, tokenizer, architecture, optimizer, training procedure, inference procedure, and evaluation process.
+
+The goal of this project is not simply to create a large model. The goal is to understand how an AI system is constructed from basic components and how those components interact.
+
+Starting with a small model makes the process easier to observe. Once the small system is understood, the same principles can be applied to larger datasets and larger neural networks.
+
+Artificial intelligence is a broad field. Neural networks are one family of methods within that field. Language models are one application of neural networks. Modern systems combine many engineering techniques to make these models useful.
+
+The process of building a model is iterative. Write code, run an experiment, inspect the results, identify a problem, make a change, and run another experiment.
+
+Every experiment teaches something. A model that fails can still reveal an important lesson about data, optimization, architecture, or evaluation.
+
+The system we are building starts small, but the fundamental process is real. Text becomes tokens. Tokens become vectors. Vectors pass through attention and neural network layers. Predictions are compared with targets. Gradients update parameters. After many iterations, the parameters contain patterns learned from the data.
+
+That is the foundation of our language model.

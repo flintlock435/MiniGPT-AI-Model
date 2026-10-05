@@ -1,0 +1,40 @@
+# Python virtual environment
+.venv/
+
+# Python cache
+__pycache__/
+*.py[cod]
+
+# IDE files
+.vscode/
+.idea/
+
+# Model checkpoints
+checkpoints/
+*.pt
+*.pth
+*.ckpt
+
+# Large downloaded datasets
+data/dolly/
+data/chat_training_dolly.txt
+
+# Generated training datasets
+data/chat_training_v11.txt
+data/chat_training_v13.txt
+
+# Local tokenizer/version files that may be generated
+# Remove these lines if you decide to commit them.
+# data/v12_tokenizer.json
+# data/version.json
+
+# Temporary files
+*.tmp
+*.temp
+
+# Logs
+*.log
+
+# OS files
+.DS_Store
+Thumbs.db
