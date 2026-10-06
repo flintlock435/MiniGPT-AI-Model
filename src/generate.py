@@ -1,3 +1,4 @@
+import json
 import os
 import re
 
@@ -5,25 +6,57 @@ import torch
 from tokenizers import Tokenizer
 
 from src.model import MiniGPT
+from src.updater import check_for_update
 
 
 # ============================================================
-# V13 SETTINGS
+# STARTUP UPDATE CHECK
+# ============================================================
+
+print()
+
+print(
+    "Checking for MiniGPT updates..."
+)
+
+try:
+
+    updated = check_for_update()
+
+    if updated:
+
+        print(
+            "Update installed."
+        )
+
+        print(
+            "Loading the updated model..."
+        )
+
+except Exception as error:
+
+    print(
+        "Update checker error:",
+        error
+    )
+
+
+print()
+
+
+# ============================================================
+# V14 SETTINGS
 # ============================================================
 
 TOKENIZER_PATH = "data/v12_tokenizer.json"
 
-CHECKPOINT_PATH = "checkpoints/v13_best_model.pt"
+CHECKPOINT_PATH = "checkpoints/v14_custom_best_model.pt"
 
 MAX_NEW_TOKENS = 80
 
-TEMPERATURE = 0.25
+REPETITION_PENALTY = 1.02
 
-TOP_K = 20
-
-REPETITION_PENALTY = 1.05
-
-USE_SAMPLING = False
+BLOCK_REPEATED_SENTENCES = True
 
 
 # ============================================================
@@ -31,13 +64,17 @@ USE_SAMPLING = False
 # ============================================================
 
 device = torch.device(
-    "cuda" if torch.cuda.is_available() else "cpu"
+    "cuda"
+    if torch.cuda.is_available()
+    else "cpu"
 )
+
 
 print(
     "Using device:",
     device
 )
+
 
 if torch.cuda.is_available():
 
@@ -48,17 +85,21 @@ if torch.cuda.is_available():
 
 
 # ============================================================
-# FILE CHECKS
+# CHECK FILES
 # ============================================================
 
-if not os.path.exists(TOKENIZER_PATH):
+if not os.path.exists(
+    TOKENIZER_PATH
+):
 
     raise FileNotFoundError(
         f"Tokenizer not found: {TOKENIZER_PATH}"
     )
 
 
-if not os.path.exists(CHECKPOINT_PATH):
+if not os.path.exists(
+    CHECKPOINT_PATH
+):
 
     raise FileNotFoundError(
         f"Checkpoint not found: {CHECKPOINT_PATH}"
@@ -66,7 +107,7 @@ if not os.path.exists(CHECKPOINT_PATH):
 
 
 # ============================================================
-# TOKENIZER
+# LOAD TOKENIZER
 # ============================================================
 
 tokenizer = Tokenizer.from_file(
@@ -74,6 +115,7 @@ tokenizer = Tokenizer.from_file(
 )
 
 vocab_size = tokenizer.get_vocab_size()
+
 
 print(
     "Tokenizer vocabulary:",
@@ -89,12 +131,12 @@ eos_id = tokenizer.token_to_id(
     "<EOS>"
 )
 
-bos_id = tokenizer.token_to_id(
-    "<BOS>"
-)
-
 pad_id = tokenizer.token_to_id(
     "<PAD>"
+)
+
+bos_id = tokenizer.token_to_id(
+    "<BOS>"
 )
 
 unk_id = tokenizer.token_to_id(
@@ -103,7 +145,7 @@ unk_id = tokenizer.token_to_id(
 
 
 # ============================================================
-# CHECKPOINT
+# LOAD CHECKPOINT
 # ============================================================
 
 checkpoint = torch.load(
@@ -135,7 +177,7 @@ num_layers = checkpoint.get(
 
 
 # ============================================================
-# MODEL
+# CREATE MODEL
 # ============================================================
 
 model = MiniGPT(
@@ -154,29 +196,66 @@ model.load_state_dict(
 model.eval()
 
 
-print(
-    "V13 model loaded."
-)
+# ============================================================
+# VERSION
+# ============================================================
+
+installed_version = "unknown"
+
+version_file = "data/version.json"
+
+
+if os.path.exists(
+    version_file
+):
+
+    try:
+
+        with open(
+            version_file,
+            "r",
+            encoding="utf-8"
+        ) as file:
+
+            version_data = json.load(
+                file
+            )
+
+
+        installed_version = str(
+            version_data.get(
+                "version",
+                "unknown"
+            )
+        )
+
+    except Exception:
+
+        installed_version = "unknown"
+
+
+else:
+
+    installed_version = "14.0.0"
+
 
 print(
-    "Parameters:",
+    "MiniGPT version:",
+    installed_version
+)
+
+
+print(
+    "Model parameters:",
     sum(
         p.numel()
         for p in model.parameters()
     )
 )
 
-print(
-    "Validation loss:",
-    checkpoint.get(
-        "best_val_loss",
-        "unknown"
-    )
-)
-
 
 # ============================================================
-# CLEAN INPUT
+# INPUT CLEANUP
 # ============================================================
 
 def clean_question(text):
@@ -189,40 +268,7 @@ def clean_question(text):
         text
     )
 
-    lower = text.lower()
-
-
-    replacements = {
-
-        "whats ": "what is ",
-
-        "what's ": "what is ",
-
-        "dont ": "don't ",
-
-        "doesnt ": "doesn't ",
-
-        "cant ": "can't ",
-
-        "isnt ": "isn't ",
-
-        "wont ": "won't "
-    }
-
-
-    for old, new in replacements.items():
-
-        if lower.startswith(old):
-
-            text = (
-                new
-                + text[len(old):]
-            )
-
-            break
-
-
-    return text.strip()
+    return text
 
 
 # ============================================================
@@ -231,17 +277,16 @@ def clean_question(text):
 
 def apply_repetition_penalty(
     logits,
-    generated_ids,
-    penalty
+    generated_ids
 ):
 
-    if penalty <= 1.0:
+    if REPETITION_PENALTY <= 1.0:
 
         return logits
 
 
     recent_ids = generated_ids[
-        -30:
+        -20:
     ]
 
 
@@ -259,127 +304,18 @@ def apply_repetition_penalty(
 
         if logits[token_id] > 0:
 
-            logits[token_id] /= penalty
+            logits[token_id] /= (
+                REPETITION_PENALTY
+            )
 
         else:
 
-            logits[token_id] *= penalty
-
-
-    return logits
-
-
-# ============================================================
-# TOKEN SELECTION
-# ============================================================
-
-def select_next_token(
-    logits,
-    generated_ids
-):
-
-    logits = logits.clone()
-
-
-    # --------------------------------------------------------
-    # Repetition penalty
-    # --------------------------------------------------------
-
-    logits = apply_repetition_penalty(
-        logits,
-        generated_ids,
-        REPETITION_PENALTY
-    )
-
-
-    # --------------------------------------------------------
-    # Block special tokens
-    # --------------------------------------------------------
-
-    for token_id in [
-        pad_id,
-        bos_id,
-        unk_id
-    ]:
-
-        if (
-            token_id is not None
-            and 0 <= token_id < logits.shape[-1]
-        ):
-
-            logits[token_id] = float(
-                "-inf"
+            logits[token_id] *= (
+                REPETITION_PENALTY
             )
 
 
-    # --------------------------------------------------------
-    # Greedy decoding
-    # --------------------------------------------------------
-
-    if not USE_SAMPLING:
-
-        return int(
-            torch.argmax(
-                logits
-            ).item()
-        )
-
-
-    # --------------------------------------------------------
-    # Sampling
-    # --------------------------------------------------------
-
-    logits = (
-        logits
-        / max(
-            TEMPERATURE,
-            0.05
-        )
-    )
-
-
-    if TOP_K > 0:
-
-        k = min(
-            TOP_K,
-            logits.shape[-1]
-        )
-
-
-        values, indices = torch.topk(
-            logits,
-            k
-        )
-
-
-        filtered = torch.full_like(
-            logits,
-            float("-inf")
-        )
-
-
-        filtered.scatter_(
-            0,
-            indices,
-            values
-        )
-
-
-        logits = filtered
-
-
-    probabilities = torch.softmax(
-        logits,
-        dim=-1
-    )
-
-
-    return int(
-        torch.multinomial(
-            probabilities,
-            1
-        ).item()
-    )
+    return logits
 
 
 # ============================================================
@@ -395,7 +331,7 @@ def generate(question):
 
 
     # --------------------------------------------------------
-    # EXACT TRAINING FORMAT
+    # EXACT FORMAT USED DURING V14 TRAINING
     # --------------------------------------------------------
 
     prompt = (
@@ -419,11 +355,11 @@ def generate(question):
     # Context limit
     # --------------------------------------------------------
 
-    prompt_ids = list(
-        prompt_ids[
+    if len(prompt_ids) > block_size:
+
+        prompt_ids = prompt_ids[
             -block_size:
         ]
-    )
 
 
     generated_ids = list(
@@ -432,7 +368,7 @@ def generate(question):
 
 
     # --------------------------------------------------------
-    # Generate tokens
+    # Generate token by token
     # --------------------------------------------------------
 
     for _ in range(
@@ -459,12 +395,47 @@ def generate(question):
         next_logits = logits[
             0,
             -1
-        ]
+        ].clone()
 
 
-        next_token = select_next_token(
+        # ----------------------------------------------------
+        # Repetition penalty
+        # ----------------------------------------------------
+
+        next_logits = apply_repetition_penalty(
             next_logits,
             generated_ids
+        )
+
+
+        # ----------------------------------------------------
+        # Block special tokens
+        # ----------------------------------------------------
+
+        for token_id in [
+            pad_id,
+            bos_id,
+            unk_id
+        ]:
+
+            if (
+                token_id is not None
+                and 0 <= token_id < next_logits.shape[-1]
+            ):
+
+                next_logits[token_id] = float(
+                    "-inf"
+                )
+
+
+        # ----------------------------------------------------
+        # Greedy decoding
+        # ----------------------------------------------------
+
+        next_token = int(
+            torch.argmax(
+                next_logits
+            ).item()
         )
 
 
@@ -486,7 +457,7 @@ def generate(question):
 
 
         # ----------------------------------------------------
-        # Stop on another conversation turn.
+        # Decode partial answer
         # ----------------------------------------------------
 
         answer_ids = generated_ids[
@@ -500,6 +471,10 @@ def generate(question):
         )
 
 
+        # ----------------------------------------------------
+        # Stop at another conversation turn
+        # ----------------------------------------------------
+
         if "\nUser:" in partial:
 
             break
@@ -510,8 +485,36 @@ def generate(question):
             break
 
 
+        # ----------------------------------------------------
+        # Stop repeated sentences
+        # ----------------------------------------------------
+
+        if BLOCK_REPEATED_SENTENCES:
+
+            sentences = re.split(
+                r"(?<=[.!?])\s+",
+                partial.strip()
+            )
+
+
+            if len(sentences) >= 3:
+
+                last = sentences[-1].strip()
+
+                previous = sentences[-2].strip()
+
+
+                if (
+                    last
+                    and last.lower()
+                    == previous.lower()
+                ):
+
+                    break
+
+
     # ========================================================
-    # DECODE ANSWER
+    # DECODE ANSWER ONLY
     # ========================================================
 
     answer_ids = generated_ids[
@@ -526,7 +529,7 @@ def generate(question):
 
 
     # ========================================================
-    # CLEAN
+    # CLEAN ANSWER
     # ========================================================
 
     answer = re.split(
@@ -571,15 +574,15 @@ print(
 )
 
 print(
-    "V13 AI CHAT"
-)
-
-print(
-    "Type 'exit' to quit."
+    "MiniGPT V14"
 )
 
 print(
     "=========================================="
+)
+
+print(
+    "Type 'exit' to quit."
 )
 
 print()
@@ -632,7 +635,7 @@ while True:
     if not answer:
 
         answer = (
-            "I don't know how to answer that yet."
+            "I don't know yet."
         )
 
 
