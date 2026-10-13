@@ -16,7 +16,7 @@ GITHUB_REPO = "flintlock435/MiniGPT-AI-Model"
 
 LOCAL_VERSION_FILE = "data/version.json"
 
-LOCAL_MODEL_FILE = "checkpoints/v14_custom_best_model.pt"
+LOCAL_MODEL_FILE = "checkpoints/model.pt"
 
 LOCAL_TOKENIZER_FILE = "data/v12_tokenizer.json"
 
@@ -122,7 +122,7 @@ def get_local_version():
 
 
 # ============================================================
-# SAVE LOCAL VERSION
+# SAVE VERSION
 # ============================================================
 
 def save_local_version(
@@ -142,13 +142,6 @@ def save_local_version(
         )
 
 
-    data = {
-        "version": str(
-            version
-        )
-    }
-
-
     temporary_file = (
         LOCAL_VERSION_FILE
         + ".tmp"
@@ -162,7 +155,11 @@ def save_local_version(
     ) as file:
 
         json.dump(
-            data,
+            {
+                "version": str(
+                    version
+                )
+            },
             file,
             indent=4
         )
@@ -175,25 +172,22 @@ def save_local_version(
 
 
 # ============================================================
-# ENSURE VERSION FILE
+# ENSURE VERSION
 # ============================================================
 
 def ensure_local_version():
 
-    if os.path.exists(
+    if not os.path.exists(
         LOCAL_VERSION_FILE
     ):
 
-        return
-
-
-    save_local_version(
-        "14.0.0"
-    )
+        save_local_version(
+            "14.0.0"
+        )
 
 
 # ============================================================
-# GET JSON FROM GITHUB
+# GITHUB REQUEST
 # ============================================================
 
 def http_get_json(
@@ -262,7 +256,7 @@ def get_latest_release():
 
 
 # ============================================================
-# FIND RELEASE ASSET
+# FIND ASSET
 # ============================================================
 
 def find_asset(
@@ -270,13 +264,10 @@ def find_asset(
     asset_name
 ):
 
-    assets = release.get(
+    for asset in release.get(
         "assets",
         []
-    )
-
-
-    for asset in assets:
+    ):
 
         if asset.get(
             "name"
@@ -336,7 +327,7 @@ def verify_asset(
     if not expected_digest:
 
         print(
-            "No SHA256 digest provided by GitHub."
+            "No SHA256 digest supplied by GitHub."
         )
 
         return False
@@ -382,7 +373,7 @@ def verify_asset(
 
 
 # ============================================================
-# DOWNLOAD FILE
+# DOWNLOAD
 # ============================================================
 
 def download_file(
@@ -427,44 +418,54 @@ def download_file(
 
 
 # ============================================================
-# SAFE FILE REPLACEMENT
+# BACKUP
 # ============================================================
 
-def replace_file(
-    source,
-    destination
+def create_backup(
+    filepath
 ):
 
-    destination_directory = os.path.dirname(
-        destination
-    )
+    if not os.path.exists(
+        filepath
+    ):
+
+        return None
 
 
-    if destination_directory:
-
-        os.makedirs(
-            destination_directory,
-            exist_ok=True
-        )
-
-
-    backup = (
-        destination
+    backup_path = (
+        filepath
         + ".backup"
     )
 
 
-    # --------------------------------------------------------
-    # Keep the current file as a backup.
-    # --------------------------------------------------------
+    shutil.copy2(
+        filepath,
+        backup_path
+    )
 
-    if os.path.exists(
+
+    return backup_path
+
+
+# ============================================================
+# INSTALL FILE
+# ============================================================
+
+def install_file(
+    source,
+    destination
+):
+
+    directory = os.path.dirname(
         destination
-    ):
+    )
 
-        shutil.copy2(
-            destination,
-            backup
+
+    if directory:
+
+        os.makedirs(
+            directory,
+            exist_ok=True
         )
 
 
@@ -498,8 +499,8 @@ def perform_update(
     if model_asset is None:
 
         print(
-            f"Update aborted: '{MODEL_ASSET_NAME}' "
-            "was not found in the GitHub release."
+            "Update aborted:"
+            " model.pt is missing from the release."
         )
 
         return False
@@ -508,8 +509,8 @@ def perform_update(
     if tokenizer_asset is None:
 
         print(
-            f"Update aborted: '{TOKENIZER_ASSET_NAME}' "
-            "was not found in the GitHub release."
+            "Update aborted:"
+            " tokenizer.json is missing from the release."
         )
 
         return False
@@ -524,45 +525,39 @@ def perform_update(
     )
 
 
-    if not model_url:
+    if not model_url or not tokenizer_url:
 
         print(
-            "Update aborted: model download URL missing."
+            "Update aborted:"
+            " release asset URLs are missing."
         )
 
         return False
 
 
-    if not tokenizer_url:
-
-        print(
-            "Update aborted: tokenizer download URL missing."
-        )
-
-        return False
+    temporary_directory = tempfile.mkdtemp(
+        prefix="minigpt_update_"
+    )
 
 
-    temporary_directory = None
+    temporary_model = os.path.join(
+        temporary_directory,
+        "model.pt"
+    )
+
+
+    temporary_tokenizer = os.path.join(
+        temporary_directory,
+        "tokenizer.json"
+    )
+
+
+    model_backup = None
+
+    tokenizer_backup = None
 
 
     try:
-
-        temporary_directory = tempfile.mkdtemp(
-            prefix="minigpt_update_"
-        )
-
-
-        temporary_model = os.path.join(
-            temporary_directory,
-            "model.pt"
-        )
-
-
-        temporary_tokenizer = os.path.join(
-            temporary_directory,
-            "tokenizer.json"
-        )
-
 
         # ====================================================
         # DOWNLOAD MODEL
@@ -663,7 +658,20 @@ def perform_update(
 
 
         # ====================================================
-        # REPLACE MODEL
+        # BACKUPS
+        # ====================================================
+
+        model_backup = create_backup(
+            LOCAL_MODEL_FILE
+        )
+
+        tokenizer_backup = create_backup(
+            LOCAL_TOKENIZER_FILE
+        )
+
+
+        # ====================================================
+        # INSTALL
         # ====================================================
 
         print(
@@ -671,22 +679,18 @@ def perform_update(
         )
 
 
-        replace_file(
+        install_file(
             temporary_model,
             LOCAL_MODEL_FILE
         )
 
-
-        # ====================================================
-        # REPLACE TOKENIZER
-        # ====================================================
 
         print(
             "Installing tokenizer..."
         )
 
 
-        replace_file(
+        install_file(
             temporary_tokenizer,
             LOCAL_TOKENIZER_FILE
         )
@@ -733,17 +737,80 @@ def perform_update(
             error
         )
 
+
+        # ----------------------------------------------------
+        # Roll back model if necessary.
+        # ----------------------------------------------------
+
+        if (
+            model_backup
+            and os.path.exists(
+                model_backup
+            )
+        ):
+
+            try:
+
+                if os.path.exists(
+                    LOCAL_MODEL_FILE
+                ):
+
+                    os.remove(
+                        LOCAL_MODEL_FILE
+                    )
+
+
+                os.replace(
+                    model_backup,
+                    LOCAL_MODEL_FILE
+                )
+
+            except Exception:
+
+                pass
+
+
+        # ----------------------------------------------------
+        # Roll back tokenizer if necessary.
+        # ----------------------------------------------------
+
+        if (
+            tokenizer_backup
+            and os.path.exists(
+                tokenizer_backup
+            )
+        ):
+
+            try:
+
+                if os.path.exists(
+                    LOCAL_TOKENIZER_FILE
+                ):
+
+                    os.remove(
+                        LOCAL_TOKENIZER_FILE
+                    )
+
+
+                os.replace(
+                    tokenizer_backup,
+                    LOCAL_TOKENIZER_FILE
+                )
+
+            except Exception:
+
+                pass
+
+
         return False
 
 
     finally:
 
-        if temporary_directory:
-
-            shutil.rmtree(
-                temporary_directory,
-                ignore_errors=True
-            )
+        shutil.rmtree(
+            temporary_directory,
+            ignore_errors=True
+        )
 
 
 # ============================================================
@@ -780,7 +847,7 @@ def check_for_update():
     if not tag_name:
 
         print(
-            "GitHub release did not contain a tag."
+            "Latest release has no tag."
         )
 
         return False
@@ -815,10 +882,6 @@ def check_for_update():
         return False
 
 
-    # ========================================================
-    # UP TO DATE
-    # ========================================================
-
     if latest_tuple <= current_tuple:
 
         print(
@@ -827,10 +890,6 @@ def check_for_update():
 
         return False
 
-
-    # ========================================================
-    # UPDATE AVAILABLE
-    # ========================================================
 
     print()
 

@@ -1,46 +1,25 @@
-VENV Activation: .\.venv\Scripts\Activate.ps1
+# MiniGPT AI Model
 
+MiniGPT is an experimental local AI project by R0sinc. It includes custom transformer training experiments and a conversational client built around a pretrained language model.
 
+## Version 15.0.0
 
+## Features
 
-Run Model: python -m src.generate
+- Local command-line conversation
+- Pretrained foundation-model inference
+- 4-bit model loading on compatible CUDA systems
+- Streaming text generation
+- Conversation history
+- Custom PyTorch transformer implementation and training experiments
+- Versioned source code and legacy checkpoint update utilies
 
-Edit Generation Code: code .\src\generate.py
+Four-bit loading reduces the model's memory requirements. Actual performance depends on the GPU, available VRAM, system RAM, installed PyTorch/CUDA components, and generation settings.
 
+## Installation
 
-Start Training: python -m src.train
+Clone the repository:
 
-Edit Training Data: code .\src\train.py
-
-
-
-Create/Recreate the Dataset: python .\src\make_dataset.py
-
-View Dataset: code .\data\chat_training.txt
-
-Edit Dataset Generator: code .\src\make_dataset.py
-
-List Checkpoints: Get-ChildItem .\checkpoints
-
-Latest Subword Checkpoint: python -c "import torch; c=torch.load('checkpoints/subword_best_model.pt',map_location='cpu',weights_only=False);                   
-                           print('Vocabulary:',c['vocab_size']); print('Block size:',c['block_size']); print('Embedding:',c.get('embed_size')); 
-                           print('Heads:',c.get('num_heads')); print('Layers:',c.get('num_layers'))"
-
-
-Tokenizer Test: python -c "from src.subword_tokenizer import SubwordTokenizer; t=SubwordTokenizer(); x=t.encode('Hello, how does a neural network learn?'); print(x);    
-                print(t.decode(x)); print('Vocabulary:',t.vocab_size)"
-
-Check Parameter Count: python -c "import torch; from src.model import MiniGPT; m=MiniGPT(vocab_size=100277,block_size=128,embed_size=64,num_heads=4,num_layers=2); 
-                       print('Parameters:',sum(p.numel() for p in m.parameters()))"
-
-
-
-
-Typical Workflow: cd "C:\Users\Josh\Desktop\AI Model"
-                  .\.venv\Scripts\Activate.ps1
-                  python .\src\make_dataset.py
-                  python -m src.train
-                  python -m src.generate
-
-
-
+```powershell
+git clone https://github.com/flintlock435/MiniGPT-AI-Model.git
+cd MiniGPT-AI-Model```
