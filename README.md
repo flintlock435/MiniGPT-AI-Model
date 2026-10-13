@@ -12,7 +12,7 @@ MiniGPT is an experimental local AI project by R0sinc. It includes custom transf
 - Streaming text generation
 - Conversation history
 - Custom PyTorch transformer implementation and training experiments
-- Versioned source code and legacy checkpoint update utilies
+- Versioned source code and legacy checkpoint update utilities
 
 Four-bit loading reduces the model's memory requirements. Actual performance depends on the GPU, available VRAM, system RAM, installed PyTorch/CUDA components, and generation settings.
 
